@@ -15,13 +15,13 @@ fn main() {
         let s: Vec<&str> = line.split(',').collect();
         let m1 = s[1].parse::<usize>().unwrap();
         let n1 = s[0].parse::<usize>().unwrap();
-        m = if m < m1 {m1} else {m};
-        n = if n < n1 {n1} else {n};
+        m = if m < m1 { m1 } else { m };
+        n = if n < n1 { n1 } else { n };
         stack_of_values.push((m1, n1));
     }
     m += 1;
     n += 1;
-    
+
     // Now create the map
     let mut paper: Vec<Vec<u32>> = vec![vec![0; n]; m];
     for (i, j) in stack_of_values {
@@ -44,7 +44,7 @@ fn main() {
             "y" => {
                 fold_hor(&mut paper, v, m, n);
                 m = v;
-            },
+            }
             _ => {
                 fold_ver(&mut paper, v, m, n);
                 n = v;
@@ -56,7 +56,9 @@ fn main() {
 }
 
 fn count_true(paper: &[Vec<u32>]) -> u32 {
-    paper.iter().fold(0, |score, line| score + line.iter().sum::<u32>())
+    paper
+        .iter()
+        .fold(0, |score, line| score + line.iter().sum::<u32>())
 }
 
 fn fold_hor(paper: &mut Vec<Vec<u32>>, v: usize, m: usize, n: usize) {
@@ -69,7 +71,7 @@ fn fold_hor(paper: &mut Vec<Vec<u32>>, v: usize, m: usize, n: usize) {
 }
 
 fn fold_ver(paper: &mut Vec<Vec<u32>>, v: usize, _m: usize, n: usize) {
-    for line in paper{
+    for line in paper {
         for j in v + 1..n {
             let d = j - v;
             line[v - d] |= line[j];
@@ -80,7 +82,7 @@ fn fold_ver(paper: &mut Vec<Vec<u32>>, v: usize, _m: usize, n: usize) {
 fn print_paper(paper: &[Vec<u32>], m: usize, n: usize) {
     for line in paper.iter().take(m) {
         for val in line.iter().take(n) {
-            let v = if *val == 1 {"x"} else {"."};
+            let v = if *val == 1 { "x" } else { "." };
             print!("{}", v);
         }
         println!();
