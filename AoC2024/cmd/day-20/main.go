@@ -77,10 +77,16 @@ func bfs(grid [][]bool, iS int, jS int, iE int, jE int, goThroughWalls bool, bas
 		elem := queue[0]
 		queue = queue[1:]
 
+		// Avoid visiting twice the same node.
+		if visited[[6]int{elem[0], elem[1], elem[4], elem[5], elem[6], elem[7]}] {
+			continue
+		}
+		visited[[6]int{elem[0], elem[1], elem[4], elem[5], elem[6], elem[7]}] = true
+
 		// Goal.
 		if elem[0] == iE && elem[1] == jE {
 			if goThroughWalls {
-				if elem[2] >= baseline - 0 {
+				if elem[2] > baseline - 100 {
 					return value
 				} else {
 					fmt.Println("We go throgh walls", elem[4], elem[5], elem[6], elem[7], "and save", baseline - elem[2])
@@ -91,12 +97,6 @@ func bfs(grid [][]bool, iS int, jS int, iE int, jE int, goThroughWalls bool, bas
 				return elem[2]
 			}
 		}
-
-		// Avoid visiting twice the same node.
-		if visited[[6]int{elem[0], elem[1], elem[4], elem[5], elem[6], elem[7]}] {
-			continue
-		}
-		visited[[6]int{elem[0], elem[1], elem[4], elem[5], elem[6], elem[7]}] = true
 
 		// Must update whether we can go through wall.
 		// If the value is 1, it means that we can only move to a wall THIS turn.
@@ -115,11 +115,12 @@ func bfs(grid [][]bool, iS int, jS int, iE int, jE int, goThroughWalls bool, bas
 				if grid[nextI][nextJ] {
 					// Add in queue.
 					queue = append(queue, [8]int{nextI, nextJ, elem[2] + 1, elem[3] - decrementWall, elem[4], elem[5], elem[6], elem[7]})
-				} else if elem[3] == 1 {
-					// Add in the queue because we can go through walls.
-					queue = append(queue, [8]int{nextI, nextJ, elem[2] + 1, 0, elem[4], elem[5], nextI, nextJ})
-				} else if elem[3] == 2 {
-					queue = append(queue, [8]int{nextI, nextJ, elem[2] + 1, 1, elem[0], elem[1], -1, -1})
+				} else if elem[3] > 0 {
+					nextI2 := elem[0] + move[0] * 2
+					nextJ2 := elem[1] + move[1] * 2
+					if inBounds(grid, nextI2, nextJ2) && grid[nextI2][nextJ2] {
+						queue = append(queue, [8]int{nextI2, nextJ2, elem[2] + 2, 0, elem[0], elem[1], nextI2, nextJ2})
+					}
 				}
 			}
 		}
